@@ -1,5 +1,6 @@
 from models.process import Process
 from algorithms.priority_non_preemptive import priority_non_preemptive_scheduling
+from algorithms.priority_preemptive import priority_preemptive_scheduling
 
 def read_process_data(file_path: str):
     """
@@ -73,13 +74,29 @@ def main():
     try:
         processes = read_process_data(input_file)
         print(f"Successfully read {len(processes)} processes.\n")
-        # Perform Priority Non-Preemptive scheduling
-        scheduled_processes = priority_non_preemptive_scheduling(processes)
+
+        # Provide options to select the desired scheduling algorithm
+        print("Select Scheduling Algorithm:")
+        print("1. Priority Non-Preemptive Scheduling")
+        print("2. Priority Preemptive Scheduling")
+        choice = input("Enter your choice (1 or 2): ")
+
+        if choice == '1':
+            # Perform Priority Non-Preemptive scheduling
+            scheduled_processes = priority_non_preemptive_scheduling(processes)
+            print("\nPriority Non-Preemptive Scheduling Results:\n")
+        elif choice == '2':
+            # Perform Priority Preemptive scheduling
+            scheduled_processes = priority_preemptive_scheduling(processes)
+            print("\nPriority Preemptive Scheduling Results:\n")
+        else:
+            print("Invalid choice. Exiting.")
+            return
+
         # Display scheduling results
         display_process_info(scheduled_processes)
     except Exception:
         print("Failed to read process data due to an error.")
-        # Handle the exception appropriately
 
 if __name__ == "__main__":
     main()
