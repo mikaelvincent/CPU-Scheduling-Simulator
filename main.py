@@ -1,5 +1,5 @@
 from models.process import Process
-from algorithms.fcfs import fcfs_scheduling
+from algorithms.priority_non_preemptive import priority_non_preemptive_scheduling
 
 def read_process_data(file_path: str):
     """
@@ -56,9 +56,9 @@ def display_process_info(processes):
     Args:
         processes (List[Process]): The list of processes with scheduling info.
     """
-    print("Process\tArrival\tBurst\tStart\tCompletion\tWaiting\tTurnaround")
+    print("Process\tArrival\tBurst\tPriority\tStart\tCompletion\tWaiting\tTurnaround")
     for idx, process in enumerate(processes):
-        print(f"P{idx+1}\t{process.arrival_time}\t{process.burst_time}\t"
+        print(f"P{idx+1}\t{process.arrival_time}\t{process.burst_time}\t{process.priority}\t"
               f"{process.start_time}\t{process.completion_time}\t"
               f"{process.waiting_time}\t{process.turnaround_time}")
     total_waiting_time = sum(p.waiting_time for p in processes)
@@ -73,8 +73,8 @@ def main():
     try:
         processes = read_process_data(input_file)
         print(f"Successfully read {len(processes)} processes.\n")
-        # Perform FCFS scheduling
-        scheduled_processes = fcfs_scheduling(processes)
+        # Perform Priority Non-Preemptive scheduling
+        scheduled_processes = priority_non_preemptive_scheduling(processes)
         # Display scheduling results
         display_process_info(scheduled_processes)
     except Exception:
