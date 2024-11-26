@@ -13,6 +13,9 @@ def round_robin_scheduling(processes: List[Process], time_quantum: int) -> Tuple
     Returns:
         Tuple[List[Process], List[Dict]]: The list of processes with updated scheduling attributes and the execution timeline.
     """
+    if not processes:
+        return [], []
+
     # Initialize remaining burst times and set start_time to None
     for process in processes:
         process.remaining_burst_time = process.burst_time

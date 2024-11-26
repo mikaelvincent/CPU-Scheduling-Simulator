@@ -11,6 +11,9 @@ def priority_preemptive_scheduling(processes: List[Process]) -> Tuple[List[Proce
     Returns:
         Tuple[List[Process], List[Dict]]: The list of processes with updated scheduling attributes and the execution timeline.
     """
+    if not processes:
+        return [], []
+
     current_time = 0
     completed_processes = 0
     n = len(processes)

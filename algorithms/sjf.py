@@ -11,6 +11,9 @@ def sjf_scheduling(processes: List[Process]) -> Tuple[List[Process], List[Dict]]
     Returns:
         Tuple[List[Process], List[Dict]]: The list of processes with updated scheduling attributes and the execution timeline.
     """
+    if not processes:
+        return [], []
+
     completed_processes = []
     gantt_chart = []
     current_time = 0
