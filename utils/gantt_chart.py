@@ -7,6 +7,9 @@ def generate_gantt_chart(gantt_chart: List[Dict]):
     Args:
         gantt_chart (List[Dict]): The execution timeline as a list of dictionaries.
     """
+    if not gantt_chart:
+        print("No Gantt chart to display.")
+        return
     print("\nGantt Chart:")
     chart = ""
     time_line = ""
