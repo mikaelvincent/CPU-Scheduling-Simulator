@@ -6,6 +6,7 @@ from algorithms.round_robin import round_robin_scheduling
 from algorithms.sjf import sjf_scheduling
 from algorithms.fcfs import fcfs_scheduling
 from utils.gantt_chart import generate_gantt_chart
+from tabulate import tabulate
 
 def read_process_data(file_path: str):
     """
@@ -60,11 +61,23 @@ def display_process_info(processes):
     if not processes:
         print("No processes to display.")
         return
-    print("Process\tArrival\tBurst\tPriority\tStart\tCompletion\tWaiting\tTurnaround")
+
+    headers = ["Process", "Arrival", "Burst", "Priority", "Start", "Completion", "Waiting", "Turnaround"]
+    table = []
     for process in processes:
-        print(f"P{process.id}\t{process.arrival_time}\t{process.burst_time}\t{process.priority}\t"
-              f"{process.start_time}\t{process.completion_time}\t"
-              f"{process.waiting_time}\t{process.turnaround_time}")
+        table.append([
+            f"P{process.id}",
+            process.arrival_time,
+            process.burst_time,
+            process.priority,
+            process.start_time,
+            process.completion_time,
+            process.waiting_time,
+            process.turnaround_time
+        ])
+
+    print(tabulate(table, headers=headers, tablefmt="grid"))
+
     total_waiting_time = sum(p.waiting_time for p in processes)
     total_turnaround_time = sum(p.turnaround_time for p in processes)
     n = len(processes)
@@ -93,16 +106,16 @@ def main():
 
         if choice == '1':
             scheduled_processes, gantt_chart = fcfs_scheduling(processes)
-            print("\nFirst Come First Serve Scheduling Results:\n")
+            print("\nFirst Come First Serve Scheduling Simulation Results:\n")
         elif choice == '2':
             scheduled_processes, gantt_chart = priority_non_preemptive_scheduling(processes)
-            print("\nPriority Non-Preemptive Scheduling Results:\n")
+            print("\nPriority Non-Preemptive Scheduling Simulation Results:\n")
         elif choice == '3':
             scheduled_processes, gantt_chart = priority_preemptive_scheduling(processes)
-            print("\nPriority Preemptive Scheduling Results:\n")
+            print("\nPriority Preemptive Scheduling Simulation Results:\n")
         elif choice == '4':
             scheduled_processes, gantt_chart = srtf_scheduling(processes)
-            print("\nShortest Remaining Time First Scheduling Results:\n")
+            print("\nShortest Remaining Time First Scheduling Simulation Results:\n")
         elif choice == '5':
             time_quantum_input = input("Enter the time quantum for Round Robin Scheduling: ")
             try:
@@ -114,10 +127,10 @@ def main():
                 print("Invalid time quantum. Exiting.")
                 return
             scheduled_processes, gantt_chart = round_robin_scheduling(processes, time_quantum)
-            print("\nRound Robin Scheduling Results:\n")
+            print("\nRound Robin Scheduling Simulation Results:\n")
         elif choice == '6':
             scheduled_processes, gantt_chart = sjf_scheduling(processes)
-            print("\nShortest Job First Scheduling Results:\n")
+            print("\nShortest Job First Scheduling Simulation Results:\n")
         else:
             print("Invalid choice. Exiting.")
             return
