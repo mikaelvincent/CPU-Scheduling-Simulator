@@ -1,7 +1,7 @@
-from typing import List
+from typing import List, Dict, Tuple
 from models.process import Process
 
-def srtf_scheduling(processes: List[Process]) -> List[Process]:
+def srtf_scheduling(processes: List[Process]) -> Tuple[List[Process], List[Dict]]:
     """
     Performs Shortest Remaining Time First scheduling on the given list of processes.
 
@@ -9,13 +9,14 @@ def srtf_scheduling(processes: List[Process]) -> List[Process]:
         processes (List[Process]): The list of processes to schedule.
 
     Returns:
-        List[Process]: The list of processes with updated scheduling attributes.
+        Tuple[List[Process], List[Dict]]: The list of processes with updated scheduling attributes and the execution timeline.
     """
     n = len(processes)
     completed = 0
     current_time = 0
     ready_queue = []
     processes_left = processes.copy()
+    gantt_chart = []
 
     # Initialize remaining burst times
     for process in processes:
@@ -38,6 +39,13 @@ def srtf_scheduling(processes: List[Process]) -> List[Process]:
             if current_process.start_time is None:
                 current_process.start_time = current_time
 
+            # Record execution event for Gantt chart
+            gantt_chart.append({
+                'process_id': current_process.id,
+                'start_time': current_time,
+                'duration': 1
+            })
+
             # Execute the process for one time unit
             current_process.remaining_burst_time -= 1
             current_time += 1
@@ -53,4 +61,4 @@ def srtf_scheduling(processes: List[Process]) -> List[Process]:
             # Advance time if no processes are ready to execute
             current_time += 1
 
-    return processes
+    return processes, gantt_chart
