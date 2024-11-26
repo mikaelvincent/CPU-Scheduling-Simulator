@@ -1,7 +1,7 @@
-from typing import List
+from typing import List, Dict, Tuple
 from models.process import Process
 
-def priority_preemptive_scheduling(processes: List[Process]) -> List[Process]:
+def priority_preemptive_scheduling(processes: List[Process]) -> Tuple[List[Process], List[Dict]]:
     """
     Performs Priority-Based Preemptive scheduling on the given list of processes.
 
@@ -9,12 +9,13 @@ def priority_preemptive_scheduling(processes: List[Process]) -> List[Process]:
         processes (List[Process]): The list of processes to schedule.
 
     Returns:
-        List[Process]: The list of processes with updated scheduling attributes.
+        Tuple[List[Process], List[Dict]]: The list of processes with updated scheduling attributes and the execution timeline.
     """
     current_time = 0
     completed_processes = 0
     n = len(processes)
     ready_queue = []
+    gantt_chart = []
 
     # Initialize remaining burst times
     for process in processes:
@@ -33,9 +34,16 @@ def priority_preemptive_scheduling(processes: List[Process]) -> List[Process]:
             ready_queue.sort(key=lambda p: p.priority)
             current_process = ready_queue[0]
 
-            # Set start_time if the process is executing for the first time
+            # Record start_time if the process is executing for the first time
             if current_process.start_time is None:
                 current_process.start_time = current_time
+
+            # Record execution event for Gantt chart
+            gantt_chart.append({
+                'process_id': current_process.id,
+                'start_time': current_time,
+                'duration': 1
+            })
 
             # Execute the process for one time unit
             current_process.remaining_burst_time -= 1
@@ -44,12 +52,12 @@ def priority_preemptive_scheduling(processes: List[Process]) -> List[Process]:
             # Remove the process from the queue if it is completed
             if current_process.remaining_burst_time == 0:
                 current_process.completion_time = current_time
-                current_process.turnaround_time = (current_process.completion_time - current_process.arrival_time)
-                current_process.waiting_time = (current_process.turnaround_time - current_process.burst_time)
+                current_process.turnaround_time = current_process.completion_time - current_process.arrival_time
+                current_process.waiting_time = current_process.turnaround_time - current_process.burst_time
                 completed_processes += 1
                 ready_queue.remove(current_process)
         else:
             # Advance time if no process is ready to execute
             current_time += 1
 
-    return processes
+    return processes, gantt_chart
