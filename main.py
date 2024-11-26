@@ -2,7 +2,10 @@ from models.process import Process
 from algorithms.priority_non_preemptive import priority_non_preemptive_scheduling
 from algorithms.priority_preemptive import priority_preemptive_scheduling
 from algorithms.srtf import srtf_scheduling
-from algorithms.round_robin import round_robin_scheduling  # Import Round Robin algorithm
+from algorithms.round_robin import round_robin_scheduling
+from algorithms.sjf import sjf_scheduling
+from algorithms.fcfs import fcfs_scheduling
+from utils.gantt_chart import generate_gantt_chart
 
 def read_process_data(file_path: str):
     """
@@ -60,8 +63,8 @@ def display_process_info(processes):
         processes (List[Process]): The list of processes with scheduling info.
     """
     print("Process\tArrival\tBurst\tPriority\tStart\tCompletion\tWaiting\tTurnaround")
-    for idx, process in enumerate(processes):
-        print(f"P{idx+1}\t{process.arrival_time}\t{process.burst_time}\t{process.priority}\t"
+    for process in processes:
+        print(f"P{process.id}\t{process.arrival_time}\t{process.burst_time}\t{process.priority}\t"
               f"{process.start_time}\t{process.completion_time}\t"
               f"{process.waiting_time}\t{process.turnaround_time}")
     total_waiting_time = sum(p.waiting_time for p in processes)
@@ -79,22 +82,27 @@ def main():
 
         # Provide options to select the desired scheduling algorithm
         print("Select Scheduling Algorithm:")
-        print("1. Priority Non-Preemptive Scheduling")
-        print("2. Priority Preemptive Scheduling")
-        print("3. Shortest Remaining Time First Scheduling")
-        print("4. Round Robin Scheduling")  # Added option for Round Robin
-        choice = input("Enter your choice (1, 2, 3, or 4): ")
+        print("1. First Come First Serve Scheduling")
+        print("2. Priority Non-Preemptive Scheduling")
+        print("3. Priority Preemptive Scheduling")
+        print("4. Shortest Remaining Time First Scheduling")
+        print("5. Round Robin Scheduling")
+        print("6. Shortest Job First Scheduling")
+        choice = input("Enter your choice (1, 2, 3, 4, 5, or 6): ")
 
         if choice == '1':
-            scheduled_processes = priority_non_preemptive_scheduling(processes)
-            print("\nPriority Non-Preemptive Scheduling Results:\n")
+            scheduled_processes, gantt_chart = fcfs_scheduling(processes)
+            print("\nFirst Come First Serve Scheduling Results:\n")
         elif choice == '2':
-            scheduled_processes = priority_preemptive_scheduling(processes)
-            print("\nPriority Preemptive Scheduling Results:\n")
+            scheduled_processes, gantt_chart = priority_non_preemptive_scheduling(processes)
+            print("\nPriority Non-Preemptive Scheduling Results:\n")
         elif choice == '3':
-            scheduled_processes = srtf_scheduling(processes)
-            print("\nShortest Remaining Time First Scheduling Results:\n")
+            scheduled_processes, gantt_chart = priority_preemptive_scheduling(processes)
+            print("\nPriority Preemptive Scheduling Results:\n")
         elif choice == '4':
+            scheduled_processes, gantt_chart = srtf_scheduling(processes)
+            print("\nShortest Remaining Time First Scheduling Results:\n")
+        elif choice == '5':
             time_quantum_input = input("Enter the time quantum for Round Robin Scheduling: ")
             try:
                 time_quantum = int(time_quantum_input)
@@ -104,14 +112,19 @@ def main():
             except ValueError:
                 print("Invalid time quantum. Exiting.")
                 return
-            scheduled_processes = round_robin_scheduling(processes, time_quantum)
+            scheduled_processes, gantt_chart = round_robin_scheduling(processes, time_quantum)
             print("\nRound Robin Scheduling Results:\n")
+        elif choice == '6':
+            scheduled_processes, gantt_chart = sjf_scheduling(processes)
+            print("\nShortest Job First Scheduling Results:\n")
         else:
             print("Invalid choice. Exiting.")
             return
 
         # Display scheduling results
         display_process_info(scheduled_processes)
+        # Display Gantt chart
+        generate_gantt_chart(gantt_chart)
     except Exception:
         print("Failed to read process data due to an error.")
 
