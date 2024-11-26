@@ -1,7 +1,8 @@
 from models.process import Process
 from algorithms.priority_non_preemptive import priority_non_preemptive_scheduling
 from algorithms.priority_preemptive import priority_preemptive_scheduling
-from algorithms.srtf import srtf_scheduling  # Importing the SRTF algorithm
+from algorithms.srtf import srtf_scheduling
+from algorithms.round_robin import round_robin_scheduling  # Import Round Robin algorithm
 
 def read_process_data(file_path: str):
     """
@@ -80,21 +81,31 @@ def main():
         print("Select Scheduling Algorithm:")
         print("1. Priority Non-Preemptive Scheduling")
         print("2. Priority Preemptive Scheduling")
-        print("3. Shortest Remaining Time First Scheduling")  # Added option for SRTF
-        choice = input("Enter your choice (1, 2, or 3): ")
+        print("3. Shortest Remaining Time First Scheduling")
+        print("4. Round Robin Scheduling")  # Added option for Round Robin
+        choice = input("Enter your choice (1, 2, 3, or 4): ")
 
         if choice == '1':
-            # Perform Priority Non-Preemptive scheduling
             scheduled_processes = priority_non_preemptive_scheduling(processes)
             print("\nPriority Non-Preemptive Scheduling Results:\n")
         elif choice == '2':
-            # Perform Priority Preemptive scheduling
             scheduled_processes = priority_preemptive_scheduling(processes)
             print("\nPriority Preemptive Scheduling Results:\n")
         elif choice == '3':
-            # Perform Shortest Remaining Time First scheduling
             scheduled_processes = srtf_scheduling(processes)
             print("\nShortest Remaining Time First Scheduling Results:\n")
+        elif choice == '4':
+            time_quantum_input = input("Enter the time quantum for Round Robin Scheduling: ")
+            try:
+                time_quantum = int(time_quantum_input)
+                if time_quantum <= 0:
+                    print("Time quantum must be a positive integer.")
+                    return
+            except ValueError:
+                print("Invalid time quantum. Exiting.")
+                return
+            scheduled_processes = round_robin_scheduling(processes, time_quantum)
+            print("\nRound Robin Scheduling Results:\n")
         else:
             print("Invalid choice. Exiting.")
             return
