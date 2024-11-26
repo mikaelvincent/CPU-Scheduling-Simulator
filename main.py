@@ -1,6 +1,7 @@
 from models.process import Process
 from algorithms.priority_non_preemptive import priority_non_preemptive_scheduling
 from algorithms.priority_preemptive import priority_preemptive_scheduling
+from algorithms.srtf import srtf_scheduling  # Importing the SRTF algorithm
 
 def read_process_data(file_path: str):
     """
@@ -79,7 +80,8 @@ def main():
         print("Select Scheduling Algorithm:")
         print("1. Priority Non-Preemptive Scheduling")
         print("2. Priority Preemptive Scheduling")
-        choice = input("Enter your choice (1 or 2): ")
+        print("3. Shortest Remaining Time First Scheduling")  # Added option for SRTF
+        choice = input("Enter your choice (1, 2, or 3): ")
 
         if choice == '1':
             # Perform Priority Non-Preemptive scheduling
@@ -89,6 +91,10 @@ def main():
             # Perform Priority Preemptive scheduling
             scheduled_processes = priority_preemptive_scheduling(processes)
             print("\nPriority Preemptive Scheduling Results:\n")
+        elif choice == '3':
+            # Perform Shortest Remaining Time First scheduling
+            scheduled_processes = srtf_scheduling(processes)
+            print("\nShortest Remaining Time First Scheduling Results:\n")
         else:
             print("Invalid choice. Exiting.")
             return
