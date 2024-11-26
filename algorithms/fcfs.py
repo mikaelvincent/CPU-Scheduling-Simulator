@@ -11,6 +11,9 @@ def fcfs_scheduling(processes: List[Process]) -> Tuple[List[Process], List[Dict]
     Returns:
         Tuple[List[Process], List[Dict]]: The list of processes with updated scheduling attributes and the execution timeline.
     """
+    if not processes:
+        return [], []
+
     # Sort processes based on arrival time
     sorted_processes = sorted(processes, key=lambda p: p.arrival_time)
     current_time = 0
