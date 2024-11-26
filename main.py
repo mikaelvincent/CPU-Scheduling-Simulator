@@ -22,37 +22,32 @@ def read_process_data(file_path: str):
         ValueError: If the input data is invalid or incomplete.
     """
     processes = []
-    try:
-        with open(file_path, 'r') as file:
-            for line_number, line in enumerate(file, start=1):
-                stripped_line = line.strip()
-                if not stripped_line:
-                    continue  # Skip empty lines
-                parts = stripped_line.split()
-                if len(parts) != 3:
-                    raise ValueError(
-                        f"Line {line_number}: Expected 3 values per line (arrival_time burst_time priority)."
-                    )
-                try:
-                    arrival_time = int(parts[0])
-                    burst_time = int(parts[1])
-                    priority = int(parts[2])
-                except ValueError:
-                    raise ValueError(
-                        f"Line {line_number}: All values must be integers."
-                    )
-                if arrival_time < 0 or burst_time <= 0 or priority < 0:
-                    raise ValueError(
-                        f"Line {line_number}: Invalid values. Arrival time and priority must be non-negative; burst time must be positive."
-                    )
-                process = Process(arrival_time, burst_time, priority)
-                processes.append(process)
-    except FileNotFoundError:
-        print(f"Error: Input file '{file_path}' not found.")
-        raise
-    except ValueError as ve:
-        print(f"Error: {ve}")
-        raise
+    with open(file_path, 'r') as file:
+        for line_number, line in enumerate(file, start=1):
+            stripped_line = line.strip()
+            if not stripped_line:
+                continue  # Skip empty lines
+            parts = stripped_line.split()
+            if len(parts) != 3:
+                raise ValueError(
+                    f"Line {line_number}: Expected 3 values per line (arrival_time burst_time priority)."
+                )
+            try:
+                arrival_time = int(parts[0])
+                burst_time = int(parts[1])
+                priority = int(parts[2])
+            except ValueError:
+                raise ValueError(
+                    f"Line {line_number}: All values must be integers."
+                )
+            if arrival_time < 0 or burst_time <= 0 or priority < 0:
+                raise ValueError(
+                    f"Line {line_number}: Invalid values. Arrival time and priority must be non-negative; burst time must be positive."
+                )
+            process = Process(arrival_time, burst_time, priority)
+            processes.append(process)
+    if not processes:
+        raise ValueError("Input file contains no valid process data.")
     return processes
 
 def display_process_info(processes):
@@ -62,6 +57,9 @@ def display_process_info(processes):
     Args:
         processes (List[Process]): The list of processes with scheduling info.
     """
+    if not processes:
+        print("No processes to display.")
+        return
     print("Process\tArrival\tBurst\tPriority\tStart\tCompletion\tWaiting\tTurnaround")
     for process in processes:
         print(f"P{process.id}\t{process.arrival_time}\t{process.burst_time}\t{process.priority}\t"
@@ -70,8 +68,11 @@ def display_process_info(processes):
     total_waiting_time = sum(p.waiting_time for p in processes)
     total_turnaround_time = sum(p.turnaround_time for p in processes)
     n = len(processes)
-    print(f"\nAverage Waiting Time: {total_waiting_time / n:.2f}")
-    print(f"Average Turnaround Time: {total_turnaround_time / n:.2f}")
+    if n > 0:
+        print(f"\nAverage Waiting Time: {total_waiting_time / n:.2f}")
+        print(f"Average Turnaround Time: {total_turnaround_time / n:.2f}")
+    else:
+        print("\nNo processes to calculate average times.")
 
 def main():
     # Entry point for the scheduling application.
@@ -125,8 +126,12 @@ def main():
         display_process_info(scheduled_processes)
         # Display Gantt chart
         generate_gantt_chart(gantt_chart)
-    except Exception:
-        print("Failed to read process data due to an error.")
+    except FileNotFoundError:
+        print(f"Error: Input file '{input_file}' not found.")
+    except ValueError as ve:
+        print(f"Error: {ve}")
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
 
 if __name__ == "__main__":
     main()
